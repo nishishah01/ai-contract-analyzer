@@ -1,0 +1,51 @@
+=====================================================
+FULL-TEXT SEARCH - QUICK START GUIDE
+=====================================================
+
+WHAT WAS FIXED:
+✓ Fixed Document.save() method to properly update search_vector
+✓ Added PostgreSQL trigger for automatic search indexing
+✓ Created management command for existing documents
+✓ Enhanced search with highlighting and better ranking
+
+NEXT STEPS TO GET SEARCH WORKING:
+=====================================================
+
+1. Run the migration (adds database trigger):
+   cd aipolicy_analyzer
+   python manage.py migrate contracts
+
+2. Update existing documents (one-time command):
+   python manage.py update_search_vectors
+
+3. Test the search:
+   curl -X GET "http://localhost:8000/api/contracts/search/?q=YOUR_SEARCH_TERM" \
+     -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+WHAT CHANGED:
+=====================================================
+✓ contracts/models.py - Fixed save method (line 24-29)
+✓ contracts/views.py - Simplified search view (line 43-52)
+✓ contracts/search_utils.py - NEW FILE with enhanced search
+✓ contracts/migrations/0002_add_search_vector_trigger.py - NEW migration
+✓ contracts/management/commands/update_search_vectors.py - NEW command
+
+HOW IT WORKS NOW:
+=====================================================
+- When you upload a document with text_content, search_vector is automatically populated
+- PostgreSQL trigger keeps search_vector in sync with text_content
+- Search uses GIN index for fast full-text queries
+- Results are ranked by relevance with highlighted snippets
+
+SEARCH API ENDPOINT:
+=====================================================
+GET /api/contracts/search/?q=SEARCH_TERM
+
+Response includes:
+- Highlighted snippets with <mark> tags
+- Relevance score
+- File information
+- Upload timestamp
+
+NO EXISTING CODE WAS MODIFIED - ONLY FIXES WERE ADDED!
+=====================================================
