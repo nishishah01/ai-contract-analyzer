@@ -1,9 +1,7 @@
-import { useState } from 'react';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
 
-const SearchBar = ({ onSearch, placeholder = "Search documents..." }) => {
-  const [query, setQuery] = useState('');
+const SearchBar = ({ onSearch }) => {
+  const [query, setQuery] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -11,15 +9,17 @@ const SearchBar = ({ onSearch, placeholder = "Search documents..." }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-      <Input
+    <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
+      <input
         type="text"
-        placeholder={placeholder}
+        placeholder="Search documents..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="pl-10"
+        className="border rounded px-3 py-2 w-full"
       />
+      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+        Search
+      </button>
     </form>
   );
 };

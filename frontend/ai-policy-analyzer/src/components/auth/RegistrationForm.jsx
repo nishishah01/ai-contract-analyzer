@@ -1,129 +1,95 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { UserPlus } from 'lucide-react';
 
-const RegistrationForm = ({ onToggle }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+const RegisterForm = ({ onToggle }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('employee');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: 'Passwords do not match',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {
-      // API call would go here
-      // const response = await fetch('/api/users/register/', { ... });
-      
-      // Mock successful registration
-      localStorage.setItem('authToken', 'mock-token');
-      toast({
-        title: 'Registration successful',
-        description: 'Welcome to AI Policy Analyzer!',
+      const response = await fetch('http://127.0.0.1:8000/api/register/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, role }),
       });
-      navigate('/dashboard');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Registration failed');
+      }
+
+      alert('Registration successful! You can now log in.');
+      onToggle(); // Switch to login form
     } catch (error) {
-      toast({
-        title: 'Registration failed',
-        description: error.message,
-        variant: 'destructive',
-      });
+      alert(error.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
       <div className="space-y-2">
-        <Label htmlFor="name">Full Name</Label>
-        <Input
-          id="name"
-          name="name"
-          type="text"
-          placeholder="John Doe"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="reg-email">Email</Label>
-        <Input
-          id="reg-email"
-          name="email"
+        <label htmlFor="email" className="font-bold block mb-1">Email</label>
+        <input
+          id="email"
           type="email"
           placeholder="you@example.com"
-          value={formData.email}
-          onChange={handleChange}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
+          className="w-full border rounded px-3 py-2"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="reg-password">Password</Label>
-        <Input
-          id="reg-password"
-          name="password"
+        <label htmlFor="password" className="font-bold block mb-1">Password</label>
+        <input
+          id="password"
           type="password"
           placeholder="••••••••"
-          value={formData.password}
-          onChange={handleChange}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
+          className="w-full border rounded px-3 py-2"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirm-password">Confirm Password</Label>
-        <Input
-          id="confirm-password"
-          name="confirmPassword"
-          type="password"
-          placeholder="••••••••"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-        />
+        <label htmlFor="role" className="font-bold block mb-1">Role</label>
+        <select
+          id="role"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          className="w-full border rounded px-2 py-1"
+        >
+          <option value="employee">Employee</option>
+          <option value="admin">Admin</option>
+          <option value="business_owner">Business Owner</option>
+          <option value="legal_reviewer">Legal Reviewer</option>
+        </select>
       </div>
 
-      <Button type="submit" className="w-full" disabled={loading}>
-        <UserPlus className="w-4 h-4 mr-2" />
-        {loading ? 'Creating account...' : 'Create Account'}
-      </Button>
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition"
+        disabled={loading}
+      >
+        {loading ? 'Signing up...' : 'Sign Up'}
+      </button>
 
-      <p className="text-sm text-center text-muted-foreground">
+      <p className="text-sm text-center text-gray-500 mt-2">
         Already have an account?{' '}
         <button
           type="button"
           onClick={onToggle}
-          className="text-primary hover:underline font-medium"
+          className="text-blue-600 hover:underline font-medium"
         >
           Sign in
         </button>
@@ -132,4 +98,4 @@ const RegistrationForm = ({ onToggle }) => {
   );
 };
 
-export default RegistrationForm;
+export default RegisterForm;

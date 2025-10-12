@@ -1,40 +1,38 @@
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Auth from "./components/Auth";
-import Dashboard from "./components/Dashboard";
-import DocumentDetail from "./components/DocumentDetail";
-import Documents from "./components/Documents";
-import Layout from "./components/layout/Layout";
-import DocumentReview from "./pages/DocumentReview";
+import { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import LoginForm from "./components/auth/LoginForm";
+import RegisterForm from "./components/auth/RegistrationForm";
+import Dashboard from "./components/dashboard/Dashboard";
+import DocumentDetail from "./components/documents/DocumentDetail";
+import Documents from "./components/documents/Documents";
+import SearchPage from "./components/search/SearchPage";
 
+const Auth = () => {
+  const [showLogin, setShowLogin] = useState(true);
 
-const queryClient = new QueryClient();
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      {showLogin ? (
+        <LoginForm onToggle={() => setShowLogin(false)} />
+      ) : (
+        <RegisterForm onToggle={() => setShowLogin(true)} />
+      )}
+    </div>
+  );
+};
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route element={<Layout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/documents" element={<Documents />} />
-            <Route path="/documents/:id" element={<DocumentDetail />} />
-            <Route path="/documents/:id/review" element={<DocumentReview />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/profile" element={<Profile />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <BrowserRouter>
+    <Routes>
+      <Route path="/auth" element={<Auth />} />
+      <Route path="*" element={<Auth />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/documents" element={<Documents />} />
+      <Route path="/documents/:id" element={<DocumentDetail />} />
+      <Route path="/search" element={<SearchPage />} />
+
+    </Routes>
+  </BrowserRouter>
 );
 
 export default App;
