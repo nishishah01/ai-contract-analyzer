@@ -15,11 +15,28 @@ const Documents = () => {
     let url = query
       ? `http://127.0.0.1:8000/api/search/?q=${encodeURIComponent(query)}`
       : "http://127.0.0.1:8000/api/documents/";
-    const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    setDocuments(data);
+    
+    console.log("Fetching documents from:", url);
+    console.log("Auth token present:", token ? "Yes" : "No");
+    
+    try {
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      console.log("Documents API Response status:", res.status);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
+      const data = await res.json();
+      console.log("Documents API Response:", data);
+      setDocuments(data);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      setDocuments([]);
+    }
     setLoading(false);
   };
 
