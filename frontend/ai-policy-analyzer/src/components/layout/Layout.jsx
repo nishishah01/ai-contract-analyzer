@@ -4,7 +4,7 @@ import Sidebar from './Sidebar';
 
 const Layout = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-100">
       <Navbar />
       <div className="flex">
         <Sidebar />
