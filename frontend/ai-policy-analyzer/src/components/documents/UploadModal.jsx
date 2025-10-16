@@ -38,7 +38,7 @@ const UploadModal = ({ onUpload }) => {
           <div className="bg-white p-6 rounded shadow w-full max-w-md">
             <h3 className="font-bold mb-4">Upload Document</h3>
             <input
-              type="file"
+              type="file" 
               ref={inputRef}
               onChange={handleFileChange}
               className="mb-4"
